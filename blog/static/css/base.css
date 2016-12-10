@@ -1,0 +1,151 @@
+h1, h2, h3 {
+    font-family: 'Bitter', serif;
+}
+a {
+    color: #333;
+    text-decoration: none;
+
+}
+a:hover {
+    text-decoration: underline;
+}
+code {
+    background-color: #e5e5e5;
+    padding: 10px;
+    box-shadow: 1px 1px 1px #ccc;
+    clear: both;
+    display: block;
+    margin: 10px 0;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    font-size:1.2em;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+div.body {
+    width:58%;
+    padding: 1%;
+    margin:0 auto;
+    background-color: #fff;
+    overflow: hidden;
+    box-shadow: 1px 1px 1px #ccc;
+    display: block;
+}
+div.content {
+    width:76%;
+    padding: 0 1% 0 1%;
+    float: left;
+}
+p.post-metadata {
+    font-size:14px;
+}
+aside {
+    width:20%;
+    float: right;
+    padding: 0 1% 0 1%;
+}
+aside h3 {
+    font-family: 'Open Sans', sans-serif;
+    padding: 0;
+    margin: 96px 0 10px;
+    font-size:22px;
+}
+aside ul {
+    margin: 0 0 15px;
+    padding: 0 0 5px;
+    border-bottom: 1px solid #999;
+}
+aside ul li {
+    margin: 0 0 7px;
+    padding: 0;
+    list-style: none;
+}
+aside ul li a {
+    font-size:18px;
+}
+aside ul li a:hover {
+    text-decoration: underline;
+}
+ul.post-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+ul.post-list h3 a {
+    text-decoration: none;
+    color: #333;
+}
+nav ul li.logo a {
+    font-size: 2.2em;
+    color: #ccc;
+    text-decoration: none;
+    font-weight:bold;
+    font-family: 'Open Sans', cursive;
+}
+
+nav ul {
+    list-style: none;
+    margin: 0 0 40px;
+    padding: 0;
+
+}
+form.form ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+form.form label {
+    clear: both;
+    display: block;
+    font-size: .7em;
+}
+a.button {
+    display: block;
+    color: #fff;
+    text-align: center;
+    padding: 2px 0;
+    border-radius: 4px;
+    font-family: 'Open Sans', cursive;
+    font-weight: bold;
+    /*width: 105px;*/
+    margin: 0 0 10px;
+    font-size: 12px;
+}
+a.button:hover {
+    text-decoration: none;
+}
+a.rss-feed {
+        background-color: orange;
+
+}
+a.feedly {
+    background-color: darkgreen;
+
+}
+@media only screen and (max-width: 768px) {
+    div.body {
+        width:95%;
+
+    }
+    aside {
+        float: none;
+        width:96%;
+        padding:2% 2%;
+        margin:40px 0 0;
+        border-top: 1px solid #ccc;
+    }
+    aside h3 {
+        margin: 20px 0;
+    }
+    div.content {
+        float: none;
+        width: 96%;
+        padding:0 2%;
+    }
+    a.button {
+        font-size:18px;
+    }
+}

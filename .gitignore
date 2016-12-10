@@ -1,0 +1,7 @@
+bjinwright-*.json
+zappa_settings.json
+*.pyc
+db.sqlite3
+.env
+*.ipynb
+.idea/*

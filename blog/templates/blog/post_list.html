@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<ul class="post-list">
+        {% for post in object_list %}
+        <li>
+            <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+
+            <p>{{ post.description }}</p>
+            <p class="post-metadata">Posted On: <time>{{ post.date_added }}</time> | Posted In: {% for cat in post.categories.all %}<a href="{% url 'category-list' cat.slug %}">{{ cat.name }}</a>{% if not forloop.last %},{% endif %} {% endfor %}</p>
+        </li>
+        {% endfor %}
+    </ul>
+{% endblock body %}
