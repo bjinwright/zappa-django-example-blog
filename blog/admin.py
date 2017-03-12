@@ -15,6 +15,12 @@ class PostAdmin(admin.ModelAdmin):
     list_filter = ('active','created_by','categories')
     prepopulated_fields = {"slug": ("title",)}
     search_fields = ['title', 'slug','description','body','keywords']
+    fields = ('title','slug','categories','description','keywords','body',
+              'active')
+
+    def save_model(self, request, obj, form, change):
+        obj.created_by = request.user
+        obj.save()
 
 
 admin.site.register(Category,CategoryAdmin)

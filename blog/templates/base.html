@@ -1,4 +1,4 @@
-{% load blog_tags static %}
+{% load blog_tags static add_version %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +9,7 @@
     {% block head %}{% endblock %}
     {% block css %}
     <link href="https://fonts.googleapis.com/css?family=Bitter|Open+Sans|Permanent+Marker" rel="stylesheet">
-    <link href="{% static 'css/base.css' %}" rel="stylesheet">
+    <link href="{% static_version 'css/base.css' %}" rel="stylesheet">
     {% endblock %}
 </head>
 <body>

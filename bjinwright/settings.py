@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'redactor',
+    'ckeditor',
+    'static_version',
     'blog',
 ]
 
@@ -73,6 +74,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'static_version.context_processors.static_urls'
             ],
         },
     },
@@ -156,13 +158,15 @@ AWS_S3_CUSTOM_DOMAIN = env('AWS_S3_CUSTOM_DOMAIN','ipoots-static.s3.amazonaws.co
 
 S3DIRECT_REGION = env('S3DIRECT_REGION','us-east-1')
 
-STATICFILES_LOCATION = env('STATICFILES_LOCATION','bjinwright_static')
+STATICFILES_LOCATION = env('STATICFILES_LOCATION','bjinwright-dev-static')
 STATICFILES_STORAGE = env('STATICFILES_STORAGE','util.custom_storages.StaticStorage')
 
 STATIC_URL = env('STATIC_URL','/bjinwright-dev-static/')
-MEDIAFILES_LOCATION = env('MEDIAFILES_LOCATION','bjinwright_media')
+MEDIAFILES_LOCATION = env('MEDIAFILES_LOCATION','bjinwright-dev-media')
 MEDIA_URL = env('MEDIA_URL','/bjinwright-dev-media/')
 DEFAULT_FILE_STORAGE = env('DEFAULT_FILE_STORAGE','util.custom_storages.MediaStorage')
+
+STATIC_VERSION=env('STATIC_VERSION',"1.0")
 
 S3DIRECT_DESTINATIONS = {
     'news-images': {
@@ -170,12 +174,14 @@ S3DIRECT_DESTINATIONS = {
         'allowed': ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
         'auth': lambda u: u.is_staff,
     },
-
 }
 
 AWS_HEADERS = {
     'Cache-Control': 'max-age=1800',
 }
 
-REDACTOR_OPTIONS = {'lang': 'en'}
-REDACTOR_UPLOAD = 'uploads/'
+CKEDITOR_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js'
+AWS_QUERYSTRING_AUTH = False
+
+# REDACTOR_OPTIONS = {'lang': 'en'}
+# REDACTOR_UPLOAD = 'uploads/'
