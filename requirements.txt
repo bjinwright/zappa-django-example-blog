@@ -7,7 +7,6 @@ django-redis==4.6.0
 django-s3direct==0.4.4
 django-static-version==0.1
 django-storages==1.5.1
-django-wysiwyg-redactor==0.4.9.1
 envs==0.3.0
 MySQL-python==1.2.5
 Unipath==1.1
