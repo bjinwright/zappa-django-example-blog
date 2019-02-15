@@ -1,0 +1,13 @@
+{% extends 'admin/base.html' %}
+{% load i18n crispy_forms_tags %}
+{% block title %}{{ action }}{% endblock %}
+
+{% block main %}
+    <h2>{{ action }}</h2>
+    <form method="post" action="" class="form"> {% csrf_token %}
+        {{ form|crispy }}
+        <input type="submit" value="submit" class="btn">
+    </form>
+
+{% endblock main %}
+

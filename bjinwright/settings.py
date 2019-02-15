@@ -14,7 +14,38 @@ import os
 
 from unipath import FSPath as Path
 from envs import env
+from docb import DocbHandler
 
+
+def get_db_kwargs():
+    kwargs = {
+        'dynamodb': {
+            'connection': {
+                'table': env('DYNAMODB_TABLE','bjinwright')
+            },
+
+            'documents': ['blog.models.Post', 'util.models.Session'],
+            'table_config': {
+                'write_capacity': 2,
+                'read_capacity': 2
+            }
+        },
+
+    }
+    if env('DYNAMODB_ENDPOINT_URL'):
+        kwargs['dynamodb']['config'] = {
+            'endpoint_url': 'http://dynamodb:8000'
+        }
+        kwargs['dynamodb']['table_config'] = {
+            'write_capacity': 100,
+            'read_capacity': 100,
+            'secondary_write_capacity': 100,
+            'secondary_read_capacity': 100
+        }
+    return kwargs
+
+
+DOCB_HANDLER = DocbHandler(get_db_kwargs())
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -24,26 +55,26 @@ PROJECT_PATH = Path(__file__).absolute().ancestor(1)
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY','YourAppSucks323')
+SECRET_KEY = env('SECRET_KEY', 'YourAppSucks323')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG',False,var_type='boolean')
+DEBUG = env('DEBUG', False, var_type='boolean')
 
-ALLOWED_HOSTS = env('ALLOWED_HOSTS',['127.0.0.1','.execute-api.us-east-1.amazonaws.com'],var_type='list')
+ALLOWED_HOSTS = env('ALLOWED_HOSTS', ['127.0.0.1', '.execute-api.us-east-1.amazonaws.com'], var_type='list')
 CSRF_TRUSTED_ORIGINS = ALLOWED_HOSTS
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
-    'django.contrib.sites',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_warrant',
+    'crispy_forms',
     'ckeditor',
-    'static_version',
+    'util',
     'blog',
 ]
 
@@ -53,13 +84,14 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django_warrant.middleware.CognitoAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-SITE_ID = env('SITE_ID',1,var_type='integer')
+SITE_ID = env('SITE_ID', 1, var_type='integer')
 
-LOGIN_URL = env('LOGIN_URL','/admin/login/')
+LOGIN_URL = env('LOGIN_URL', '/admin/login/')
 
 ROOT_URLCONF = 'bjinwright.urls'
 
@@ -73,8 +105,7 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'static_version.context_processors.static_urls'
+                'django.contrib.messages.context_processors.messages'
             ],
         },
     },
@@ -82,31 +113,41 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'bjinwright.wsgi.application'
 
+AUTHENTICATION_BACKENDS = [
+    'django_warrant.backend.CognitoNoModelBackend'
+]
 
-# Database
-# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
+COGNITO_TEST_USERNAME = env('COGNITO_TEST_USERNAME')
 
-DATABASES = {
-    'default': {
-        'ENGINE': env('DATABASE_ENGINE','django.db.backends.sqlite3'),
-        'NAME': env('DATABASE_NAME',os.path.join(BASE_DIR, 'db.sqlite3')),
-        'USER': env('DATABASE_USER'),
-        'PASSWORD':env('DATABASE_PASSWORD'),
-        'HOST':env('DATABASE_HOST'),
-        'PORT':env('DATABASE_PORT')
-    }
-}
+COGNITO_TEST_PASSWORD = env('COGNITO_TEST_PASSWORD')
 
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://{0}".format(env('REDIS_HOST','localhost:6379')),
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient"
-        }
-    }
-}
+COGNITO_USER_POOL_ID = env('COGNITO_USER_POOL_ID')
 
+COGNITO_ADMIN_GROUP = env('COGNITO_ADMIN_GROUP', 'Admins')
+
+COGNITO_APP_ID = env('COGNITO_APP_ID')
+
+COGNITO_CLIENT_SECRET = env('COGNITO_CLIENT_SECRET')
+
+COGNITO_ATTR_MAPPING = env(
+    'COGNITO_ATTR_MAPPING',
+    {
+        'email': 'email',
+        'given_name': 'first_name',
+        'family_name': 'last_name',
+        'name': 'name',
+        'username': 'username',
+        'address': 'address',
+        'gender': 'gender',
+        'preferred_username': 'preferred_username',
+        'phone_number': 'phone_number',
+        'phone_number_verified': 'phone_number_verified',
+        'custom:api_key': 'api_key',
+        'custom:api_key_id': 'api_key_id'
+    },
+    var_type='dict')
+
+SESSION_ENGINE = 'util.backend'
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 
@@ -124,7 +165,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
@@ -152,25 +192,23 @@ AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
 
 AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
 
-AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME','ipoots-static')
+AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME', 'ipoots-static')
 
-AWS_S3_CUSTOM_DOMAIN = env('AWS_S3_CUSTOM_DOMAIN','ipoots-static.s3.amazonaws.com')
+AWS_S3_CUSTOM_DOMAIN = env('AWS_S3_CUSTOM_DOMAIN', 'ipoots-static.s3.amazonaws.com')
 
-S3DIRECT_REGION = env('S3DIRECT_REGION','us-east-1')
+S3DIRECT_REGION = env('S3DIRECT_REGION', 'us-east-1')
 
-STATICFILES_LOCATION = env('STATICFILES_LOCATION','bjinwright-dev-static')
-STATICFILES_STORAGE = env('STATICFILES_STORAGE','util.custom_storages.StaticStorage')
+STATICFILES_LOCATION = env('STATICFILES_LOCATION', 'bjinwright-dev-static')
+STATICFILES_STORAGE = env('STATICFILES_STORAGE', 'util.custom_storages.StaticStorage')
 
-STATIC_URL = env('STATIC_URL','/bjinwright-dev-static/')
-MEDIAFILES_LOCATION = env('MEDIAFILES_LOCATION','bjinwright-dev-media')
-MEDIA_URL = env('MEDIA_URL','/bjinwright-dev-media/')
-DEFAULT_FILE_STORAGE = env('DEFAULT_FILE_STORAGE','util.custom_storages.MediaStorage')
-
-STATIC_VERSION=env('STATIC_VERSION',"1.0")
+STATIC_URL = env('STATIC_URL', '/bjinwright-dev-static/')
+MEDIAFILES_LOCATION = env('MEDIAFILES_LOCATION', 'bjinwright-dev-media')
+MEDIA_URL = env('MEDIA_URL', '/bjinwright-dev-media/')
+DEFAULT_FILE_STORAGE = env('DEFAULT_FILE_STORAGE', 'util.custom_storages.MediaStorage')
 
 S3DIRECT_DESTINATIONS = {
     'news-images': {
-        'key': env('S3DIRECT_S3_KEY','{}/posts-static'.format(MEDIAFILES_LOCATION)),
+        'key': env('S3DIRECT_S3_KEY', '{}/posts-static'.format(MEDIAFILES_LOCATION)),
         'allowed': ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
         'auth': lambda u: u.is_staff,
     },

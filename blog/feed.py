@@ -12,7 +12,7 @@ class LatestEntriesFeed(Feed):
                   "DevOps cost and time."
 
     def items(self):
-        return Post.objects.filter(active=True).order_by('-date_added')[:5]
+        return Post.objects().filter({'active': True})
 
     def item_title(self, item):
         return item.title

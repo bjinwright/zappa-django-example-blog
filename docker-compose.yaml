@@ -1,0 +1,32 @@
+version: '3.5'
+
+services:
+  web:
+    restart: always
+    build: .
+    expose:
+      - "5000"
+    ports:
+      - 5000:5000
+    links:
+      - dynamodb:dynamodb
+    depends_on:
+      - dynamodb
+    volumes:
+      - .:/code/bjinwright
+    command: /code/ve/bin/python manage.py runserver 0.0.0.0:5000
+    env_file: .env
+
+  dynamodb:
+    image: instructure/dynamo-local-admin
+    restart: always
+    expose:
+      - "8000"
+    ports:
+      - 8000:8000
+    volumes:
+      - dynamodata:/var/lib/dynamo
+
+volumes:
+  dynamodata:
+    driver: local

@@ -1,4 +1,4 @@
-{% load blog_tags static add_version %}
+{% load blog_tags static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +9,7 @@
     {% block head %}{% endblock %}
     {% block css %}
     <link href="https://fonts.googleapis.com/css?family=Bitter|Open+Sans|Permanent+Marker" rel="stylesheet">
-    <link href="{% static_version 'css/base.css' %}" rel="stylesheet">
+    <link href="{% static 'css/base.css' %}" rel="stylesheet">
     {% endblock %}
 </head>
 <body>
@@ -26,14 +26,15 @@
     {% endblock %}
 </div>
 <aside>
-    {% load cache %}
-{% cache 500 sidebar %}
+
+
     <h3>Categories</h3>
     {% cat_list %}
-    {% endcache %}
 
+{% comment %}
 <a href="{% url 'feed' %}" class="button rss-feed">RSS Feed</a>
 <a href="http://feedly.com/i/welcome/feed/https://www.jinwright.net/feed/" class="button feedly">Follow on Feedly</a>
+{% endcomment %}
 </aside>
 </div>
 

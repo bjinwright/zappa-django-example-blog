@@ -1,40 +1,56 @@
 from __future__ import unicode_literals
 
-from django.db import models
-from django.conf import settings
+import docb
 from django.urls import reverse
-from ckeditor.fields import RichTextField
-
-class Category(models.Model):
-    name = models.CharField(max_length=200)
-    slug = models.SlugField()
-
-    def __unicode__(self):
-        return self.name
-
-    def get_absolute_url(self):
-        return reverse('category-list',args=[self.slug])
-    class Meta:
-        verbose_name_plural = 'Categories'
+from django.conf import settings
 
 
-class Post(models.Model):
-    title = models.CharField(max_length=200)
-    slug = models.SlugField()
-    categories = models.ManyToManyField(Category,blank=True)
-    description = models.CharField(max_length=160,blank=True,null=True)
-    keywords = models.CharField(max_length=160,blank=True,null=True)
-    body = RichTextField()
-    date_added = models.DateTimeField(auto_now_add=True)
-    date_updated = models.DateTimeField(auto_now=True)
-    created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE
-    )
-    active = models.BooleanField(default=False)
+class Category(object):
+
+    categories = {
+        'Python': 'python',
+        'Serverless': 'serverless',
+        'Personal': 'personal',
+        'Django': 'django'
+    }
+
+    @property
+    def choices(self):
+        return self.categories
+
+    @property
+    def django_choices(self):
+        return [(v, k) for k, v in self.categories.items()]
+
+    @property
+    def list(self):
+        return [{'name': k, 'slug': v} for k, v in self.categories.items()]
+
+    def get_category(self, slug):
+        cat = list(filter(lambda x: slug == x['slug'], self.list))
+        return cat[0]
+
+
+CATEGORIES = Category()
+
+
+class Post(docb.Document):
+    title = docb.CharProperty(required=True)
+    slug = docb.SlugProperty(required=True, unique=True)
+    category = docb.SlugProperty(required=True, choices=CATEGORIES.choices)
+    description = docb.CharProperty()
+    keywords = docb.CharProperty()
+    body = docb.CharProperty(required=True)
+    date_added = docb.DateTimeProperty(auto_now_add=True)
+    date_updated = docb.DateTimeProperty(auto_now=True)
+    active = docb.BooleanProperty(default=False)
 
     def __unicode__(self):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('post-detail',args=[self.slug])
+        return reverse('post-detail', args=[self.slug])
+
+    class Meta:
+        use_db = 'dynamodb'
+        handler = settings.DOCB_HANDLER

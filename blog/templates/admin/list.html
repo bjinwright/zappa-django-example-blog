@@ -1,0 +1,97 @@
+{% extends 'admin/base.html' %}
+{% load i18n %}
+
+{% block title %}Posts{% endblock %}
+{% block breadcrumbs %}
+    <li class="breadcrumb-item" aria-current="page">{% trans 'Tickets' %}</li>
+{% endblock breadcrumbs %}
+
+{% block main %}
+
+    <h2>{% trans 'Posts' %}</h2>
+    <div class="row">
+            <div class="col-12">
+            <nav class="nav button-nav">
+                <ul>
+                    <li><a href="{% url 'create-post' %}" class="nav-link btn btn-success">{% trans "New Post" %}</a></li>
+                </ul>
+            </nav>
+              {% if page_obj.has_other_pages %}
+    <nav aria-label="Page navigation">
+  <ul class="pagination">
+    {% if page_obj.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+    {% else %}
+        <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">Previous</a></li>
+    {% endif %}
+    {% for i in page_obj.paginator.page_range %}
+      {% if page_obj.number == i %}
+          <li class="active page-item"><a class="page-link" href="#" tabindex="-1"><span>{{ i }} <span class="sr-only">(current)</span></span></a></li>
+      {% else %}
+        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+    {% else %}
+        <li class="disabled page-item"><a class="page-link" href="#" tabindex="-1">Next</a></li>
+    {% endif %}
+    </ul>
+    </nav>
+{% endif %}
+                </div>
+        </div>
+
+
+    <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                    <th>{% trans "Title" %}</th>
+                    <th>{% trans "Category" %}</th>
+                    <th>{% trans "Slug" %}</th>
+                    <th>{% trans "Created" %}</th>
+                    <th>{% trans "Updated" %}</th>
+                    <th>{% trans "Active" %}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for obj in object_list %}
+                <tr>
+                    <td><a href="{% url 'update-post' obj.slug %}">{{ obj.title }}</a></td>
+                    <td>{{ obj.category }}</td>
+                    <td>{{ obj.slug }}</td>
+                    <td>{{ obj.date_added }}</td>
+                    <td>{{ obj.date_updated }}</td>
+                    <td>{{ obj.active }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+{% if page_obj.has_other_pages %}
+    <nav aria-label="Page navigation">
+  <ul class="pagination">
+    {% if page_obj.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+    {% else %}
+        <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">Previous</a></li>
+    {% endif %}
+    {% for i in page_obj.paginator.page_range %}
+      {% if page_obj.number == i %}
+          <li class="active page-item"><a class="page-link" href="#" tabindex="-1"><span>{{ i }} <span class="sr-only">(current)</span></span></a></li>
+      {% else %}
+        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+    {% else %}
+        <li class="disabled page-item"><a class="page-link" href="#" tabindex="-1">Next</a></li>
+    {% endif %}
+    </ul>
+    </nav>
+{% endif %}
+
+{% endblock main %}
