@@ -2,20 +2,20 @@
 An example app that shows how to setup an app using environment variables (envs) with Zappa
 
 
-##Setup Guide
+## Setup Guide
 
-###Clone repo
+### Clone repo
 ```
 git clone
 ```
 
-###Create virtualenv
+### Create virtualenv
 
 ```
 mkvirtualenv bjblog -a ~/yourpathto/repo
 ```
 
-###Set Environment Varialbes (Required Variables Below)
+### Set Environment Varialbes (Required Variables Below)
 
 ```
 DATABASE_ENGINE=django.db.backends.mysql
@@ -35,30 +35,30 @@ AWS_STORAGE_BUCKET_NAME=your-bucket
 AWS_S3_CUSTOM_DOMAIN=your-bucket.s3.amazonaws.com
 ```
 
-###Install Requirements
+### Install Requirements
 
 ```pip install -r requirements.txt```
 
-###Zappa Init
+### Zappa Init
 
 Make sure you have the domain setting set in your stage in the zappa_settings.json file. 
 
 ```zappa init```
 
 
-###Zappa Deploy
+### Zappa Deploy
 
 ```zappa deploy dev```
 
-###Migrate DB
+### Migrate DB
 
 ```zappa manage migrate```
 
-###Collectstatic
+### Collectstatic
 
 ``` zappa manage prod "collectstatic --noinput"```
 
-###Create SSL via API Gateway
+### Create SSL via API Gateway
 
 Open the AWS Management Console and create a ACM certificate, validate via email 
 and then use in the API Gateway console.
